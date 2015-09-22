@@ -11,16 +11,12 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -38,7 +34,7 @@ public class GameScreen implements Screen, InputProcessor {
 	//box2d necessities
 	private Box2DDebugRenderer debugRenderer;
 	private World world;
-	private Array<Body> bodies = new Array<Body>();
+	//private Array<Body> bodies = new Array<Body>();
 	private BodyBuilder bodyBuilder;
 	
 	//tmx map necessities
@@ -82,6 +78,8 @@ public class GameScreen implements Screen, InputProcessor {
 		//build the box2d objects
 		bodyBuilder = new BodyBuilder();
 		bodyBuilder.createBodies(entities, world, map);
+		
+		entities.add(new AnimationTest(world, new Vector2(5, 13), new Vector2(2f, 0f), 2f, 2f));
 	}
 
 	@Override
@@ -115,15 +113,20 @@ public class GameScreen implements Screen, InputProcessor {
 			
 			game.batch.setProjectionMatrix(camera.combined);
 			game.batch.begin();
+			for(Entity entity : entities){
+				entity.render(game.batch, delta);
+			}
+			/*
 			world.getBodies(bodies);
 			for(Body body : bodies){
-				if(body.getUserData() != null && body.getUserData() instanceof Sprite){
+				if(body.getUserData() != null && body.getUserData() instanceof Entity){
 					Sprite sprite = (Sprite) body.getUserData();
 					sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2, body.getPosition().y - sprite.getHeight() / 2);
 					sprite.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
 					sprite.draw(game.batch);
 				}
 			}
+			*/
 			game.batch.end();
 		} else{
 			debugRenderer.render(world, camera.combined);
