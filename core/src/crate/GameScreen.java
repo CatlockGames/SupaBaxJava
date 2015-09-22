@@ -34,7 +34,6 @@ public class GameScreen implements Screen, InputProcessor {
 	//box2d necessities
 	private Box2DDebugRenderer debugRenderer;
 	private World world;
-	//private Array<Body> bodies = new Array<Body>();
 	private BodyBuilder bodyBuilder;
 	
 	//tmx map necessities
@@ -116,17 +115,6 @@ public class GameScreen implements Screen, InputProcessor {
 			for(Entity entity : entities){
 				entity.render(game.batch, delta);
 			}
-			/*
-			world.getBodies(bodies);
-			for(Body body : bodies){
-				if(body.getUserData() != null && body.getUserData() instanceof Entity){
-					Sprite sprite = (Sprite) body.getUserData();
-					sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2, body.getPosition().y - sprite.getHeight() / 2);
-					sprite.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
-					sprite.draw(game.batch);
-				}
-			}
-			*/
 			game.batch.end();
 		} else{
 			debugRenderer.render(world, camera.combined);
