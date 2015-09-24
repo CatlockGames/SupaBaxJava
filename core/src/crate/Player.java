@@ -20,6 +20,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 /**
  * @author Ryan
+ * @author Aaron
  *
  */
 public class Player extends Entity{
@@ -42,7 +43,7 @@ public class Player extends Entity{
 	public Player(World world, Vector2 position) {
 		//Setup the animation
 		sheet = new Texture(Gdx.files.internal("test.png"));
-		TextureRegion[][] temp = TextureRegion.split(sheet, 32, 32);
+		TextureRegion[][] temp = TextureRegion.split(sheet, (int) (width * SupaBax.PPM), (int) (height * SupaBax.PPM));
 		//TODO Add animations
 		
 		stateTime = 0;
