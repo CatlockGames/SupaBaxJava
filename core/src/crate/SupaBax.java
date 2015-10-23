@@ -1,6 +1,7 @@
 package crate;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 /**
@@ -25,6 +26,8 @@ public class SupaBax extends Game {
 		gameScreen = new GameScreen(this);
 		
 		this.setScreen(gameScreen);
+		
+		Gdx.graphics.setDisplayMode(Gdx.graphics.getDesktopDisplayMode().width, Gdx.graphics.getDesktopDisplayMode().height, true);
 	}
 
 	@Override

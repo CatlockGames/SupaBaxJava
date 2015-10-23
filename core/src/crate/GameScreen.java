@@ -16,6 +16,10 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -29,14 +33,14 @@ public class GameScreen implements Screen, InputProcessor {
 	private SupaBax game;
 	
 	//to switch between debug rendering and normal rendering
-	private boolean debug = false;
+	private boolean debug = true;
 	
 	//box2d necessities
 	private Box2DDebugRenderer debugRenderer;
 	private World world;
 	private BodyBuilder bodyBuilder;
 	
-	//tmx map necessities
+	//tmx map stuff
 	private TmxMapLoader mapLoader;
 	private TiledMap map;
 	private OrthogonalTiledMapRenderer mapRenderer;
@@ -47,6 +51,7 @@ public class GameScreen implements Screen, InputProcessor {
 	
 	//Entities in the game
 	public ArrayList<Entity> entities = new ArrayList<Entity>();
+	private Player player;
 
 	/**
 	 * 
@@ -67,7 +72,7 @@ public class GameScreen implements Screen, InputProcessor {
 		
 		//setup box2d world
 		debugRenderer = new Box2DDebugRenderer();
-		world = new World(new Vector2(0, -9.8f), true);
+		world = new World(new Vector2(0, -20f), true);
 		
 		//load the tmx map
 		mapLoader = new TmxMapLoader();
@@ -78,12 +83,39 @@ public class GameScreen implements Screen, InputProcessor {
 		bodyBuilder = new BodyBuilder();
 		bodyBuilder.createBodies(entities, world, map);
 		
-		entities.add(new AnimationTest(world, new Vector2(5, 13), new Vector2(2f, 0f), 2f, 2f));
+		player = (Player) entities.get(0);
 	}
 
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(this);
+		
+		//Set the contact listener for the box2d world to callback to.
+		world.setContactListener(new ContactListener() {
+			
+			@Override
+			public void preSolve(Contact contact, Manifold oldManifold) {
+				contact.resetFriction();
+			}
+			
+			@Override
+			public void postSolve(Contact contact, ContactImpulse impulse) {
+			}
+			
+			@Override
+			public void endContact(Contact contact) {
+				if(contact.getFixtureA().getUserData() == "ground sensor" || contact.getFixtureB().getUserData() == "ground sensor"){
+					player.setGrounded(false);
+				}
+			}
+			
+			@Override
+			public void beginContact(Contact contact) {
+				if(contact.getFixtureA().getUserData() == "ground sensor" || contact.getFixtureB().getUserData() == "ground sensor"){
+					player.setGrounded(true);
+				}
+			}
+		});
 	}
 	
 	/**
@@ -91,12 +123,12 @@ public class GameScreen implements Screen, InputProcessor {
 	 * @param delta
 	 */
 	public void update(float delta){
-		world.step(delta, 6, 2);
-		camera.update();
-		
 		for(Entity entity : entities){
 			entity.update(delta);
 		}
+		
+		world.step(delta, 6, 2);
+		camera.update();
 	}
 
 	@Override
@@ -163,11 +195,30 @@ public class GameScreen implements Screen, InputProcessor {
 			}
 		}
 		
+		//Handle player movement
+		if(keycode == Input.Keys.A){
+			player.setMovingLeft(true);
+		} else if(keycode == Input.Keys.D){
+			player.setMovingRight(true);
+		}
+		if(keycode == Input.Keys.SPACE){
+			player.setJump(true);
+		}
+		
 		return false;
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
+		if(keycode == Input.Keys.A){
+			player.setMovingLeft(false);
+		} else if(keycode == Input.Keys.D){
+			player.setMovingRight(false);
+		}
+		if(keycode == Input.Keys.SPACE){
+			player.setJump(false);
+		}
+		
 		return false;
 	}
 

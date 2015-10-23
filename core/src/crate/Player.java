@@ -8,13 +8,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
@@ -24,28 +23,41 @@ import com.badlogic.gdx.physics.box2d.World;
  *
  */
 public class Player extends Entity{
-	private float width = 1;
-	private float height = 1;
-	
 	private Body body;
+	private Fixture bodyFixture;
+	private Fixture groundSensorFixture;
 	
 	private Texture sheet;
-	//TODO Add animations
 	private Animation currentAnimation;
 	
 	private float stateTime;
 	
 	private Sprite sprite;
 	
+	//Action booleans
+	private boolean movingLeft;
+	private boolean movingRight;
+	private boolean jump = false;
+	
+	private boolean grounded = false;
+	
+	private float width = 1;
+	private float height = 1;
+	
+	private float maxSpeed = 5f;
+	
+	//private int previousDirection;
+	
 	/**
 	 * 
+	 * @param world
+	 * @param position
 	 */
 	public Player(World world, Vector2 position) {
 		//Setup the animation
 		sheet = new Texture(Gdx.files.internal("test.png"));
-		TextureRegion[][] temp = TextureRegion.split(sheet, (int) (width * SupaBax.PPM), (int) (height * SupaBax.PPM));
+		//TextureRegion[][] temp = TextureRegion.split(sheet, (int) (width * SupaBax.PPM), (int) (height * SupaBax.PPM));
 		//TODO Add animations
-		
 		stateTime = 0;
 		
 		//Scale the sprite to meters
@@ -53,29 +65,73 @@ public class Player extends Entity{
 		sprite.setSize(width, height);
 		sprite.setOriginCenter();
 		
-		//Create box2d body
-		PolygonShape box = new PolygonShape();
-		box.setAsBox(width / 2f, height / 2f);
-
+		//Body definition
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.position.set(position);
-
-		FixtureDef fixtureDef = new FixtureDef();
-		fixtureDef.shape = box;
-		fixtureDef.density = 0.5f;
-		fixtureDef.friction = 0.4f;
-		fixtureDef.restitution = 0.6f;
-
+		bodyDef.fixedRotation = true;
+		bodyDef.bullet = true;
+		
 		body = world.createBody(bodyDef);
-		body.createFixture(fixtureDef);
+		body.setUserData(this);
+		
+		//player body shape definition
+		PolygonShape bodyShape = new PolygonShape();
+		bodyShape.setAsBox(width / 2f, height / 2f);
+		bodyFixture = body.createFixture(bodyShape, 1f);
+		bodyFixture.setUserData("physics fixture");
+		
+		//Ground sensor shape definition
+		PolygonShape groundSensorShape = new PolygonShape();
+		groundSensorShape.setAsBox(width / 2.5f, height / 6f, new Vector2(0f, -height / 2f), 0f);
+		groundSensorFixture = body.createFixture(groundSensorShape, 0f);
+		groundSensorFixture.setSensor(true);
+		groundSensorFixture.setUserData("ground sensor");
 
-		box.dispose();
+		bodyShape.dispose();
+		groundSensorShape.dispose();
 	}
 
 	@Override
 	public void update(float delta) {
+		//Get the current position and velocity for calculations
+		Vector2 vel = body.getLinearVelocity();
+		Vector2 pos = body.getPosition();
 		
+		//Cap movement
+		if(Math.abs(vel.x) > maxSpeed){
+			vel.x = Math.signum(vel.x) * maxSpeed;
+			body.setLinearVelocity(vel);
+		}
+		
+		//Disable friction while jumping
+		if(!grounded){
+			bodyFixture.setFriction(0f);
+		} else{
+			if(!movingLeft && !movingRight){
+				bodyFixture.setFriction(100f);
+			} else{
+				bodyFixture.setFriction(0.2f);
+			}
+			//for moving platforms
+			//body.applyLinearImpulse(new Vector2(0f, -20f), pos, true);
+		}
+		
+		//Move left if below the max speed
+		if(movingLeft && vel.x > -maxSpeed){
+			body.applyLinearImpulse(new Vector2(-2f, 0f), pos, true);
+		}
+		//Move right if below the max speed
+		if(movingRight && vel.x < maxSpeed){
+			body.applyLinearImpulse(new Vector2(2f, 0f), pos, true);
+		}
+		//Jump if grounded
+		if(jump){
+			jump = false;
+			if(grounded){
+				body.applyLinearImpulse(new Vector2(0f, 12f), pos, true);
+			}
+		}
 	}
 
 	@Override
@@ -91,5 +147,45 @@ public class Player extends Entity{
 	@Override
 	public void dispose() {
 		sheet.dispose();
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Vector2 getPosition(){
+		return body.getPosition();
+	}
+
+	/**
+	 * 
+	 * @param jump
+	 */
+	public void setJump(boolean jump){
+		this.jump = jump;
+	}
+	
+	/**
+	 * 
+	 * @param grounded
+	 */
+	public void setGrounded(boolean grounded){
+		this.grounded = grounded;
+	}
+
+	/**
+	 * 
+	 * @param movingLeft
+	 */
+	public void setMovingLeft(boolean movingLeft) {
+		this.movingLeft = movingLeft;
+	}
+
+	/**
+	 * 
+	 * @param movingRight
+	 */
+	public void setMovingRight(boolean movingRight) {
+		this.movingRight = movingRight;
 	}
 }
