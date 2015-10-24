@@ -10,7 +10,7 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "Supa Bax";
-		config.addIcon("icon.png", FileType.Internal);
+		config.addIcon("crate.png", FileType.Internal);
 		new LwjglApplication(new SupaBax(), config);
 	}
 }

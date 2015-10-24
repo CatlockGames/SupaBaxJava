@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -44,7 +45,7 @@ public class Player extends Entity{
 	private float width = 1;
 	private float height = 1;
 	
-	private float maxSpeed = 5f;
+	private float maxSpeed = 9f;
 	
 	//private int previousDirection;
 	
@@ -55,8 +56,13 @@ public class Player extends Entity{
 	 */
 	public Player(World world, Vector2 position) {
 		//Setup the animation
-		sheet = new Texture(Gdx.files.internal("test.png"));
-		//TextureRegion[][] temp = TextureRegion.split(sheet, (int) (width * SupaBax.PPM), (int) (height * SupaBax.PPM));
+		sheet = new Texture(Gdx.files.internal("tileset.png"));
+		TextureRegion[][] temp = TextureRegion.split(sheet, (int) (width * SupaBax.PPM), (int) (height * SupaBax.PPM));
+		
+		TextureRegion[] frames = {
+				temp[0][0]
+		};
+		currentAnimation = new Animation(0.5f, frames);
 		//TODO Add animations
 		stateTime = 0;
 		
@@ -129,7 +135,7 @@ public class Player extends Entity{
 		if(jump){
 			jump = false;
 			if(grounded){
-				body.applyLinearImpulse(new Vector2(0f, 12f), pos, true);
+				body.applyLinearImpulse(new Vector2(0f, 19f), pos, true);
 			}
 		}
 	}

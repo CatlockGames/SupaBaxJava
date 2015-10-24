@@ -72,7 +72,7 @@ public class GameScreen implements Screen, InputProcessor {
 		
 		//setup box2d world
 		debugRenderer = new Box2DDebugRenderer();
-		world = new World(new Vector2(0, -20f), true);
+		world = new World(new Vector2(0, -50f), true);
 		
 		//load the tmx map
 		mapLoader = new TmxMapLoader();
