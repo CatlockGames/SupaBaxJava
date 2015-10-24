@@ -28,6 +28,7 @@ public class SmallEnemy extends Entity {
 	private Body body;
 	private Fixture physicsFixture;
 	private Fixture sideSensorFixture;
+	private Fixture groundSensorFixture;
 	
 	private Texture sheet;
 	private Animation currentAnimation;
@@ -41,6 +42,9 @@ public class SmallEnemy extends Entity {
 	
 	private float speed = 4f;
 	private float direction = 1f;
+	private float rage = 1f;
+	
+	private boolean reincarnate = false;
 
 	/**
 	 * 
@@ -66,7 +70,7 @@ public class SmallEnemy extends Entity {
 		//Body definition
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
-		bodyDef.position.set(new Vector2(12, 16));
+		bodyDef.position.set(new Vector2(12f, 18f));
 		bodyDef.fixedRotation = true;
 		//bodyDef.bullet = true;
 		
@@ -78,17 +82,25 @@ public class SmallEnemy extends Entity {
 		physicsShape.setAsBox(width / 2f, height / 2f);
 		physicsFixture = body.createFixture(physicsShape, 1f);
 		physicsFixture.setUserData("epf");
+		physicsFixture.setFriction(0f);
 		
+		//side sensor definition
 		PolygonShape sideSensorShape = new PolygonShape();
 		sideSensorShape.setAsBox(width / 2f + width / 12f, height / 4f);
 		sideSensorFixture = body.createFixture(sideSensorShape, 0f);
 		sideSensorFixture.setSensor(true);
 		sideSensorFixture.setUserData("essf");
 		
+		//ground sensor definition
+		PolygonShape groundSensorShape = new PolygonShape();
+		groundSensorShape.setAsBox(width / 2.5f, height / 6f, new Vector2(0f, -height / 2f), 0f);
+		groundSensorFixture = body.createFixture(groundSensorShape, 0f);
+		groundSensorFixture.setSensor(true);
+		groundSensorFixture.setUserData("egsf");
+		
 		physicsShape.dispose();
 		sideSensorShape.dispose();
-		
-		physicsFixture.setFriction(0f);
+		groundSensorShape.dispose();
 		
 		//Sets a random direction
 		Random random = new Random();
@@ -102,7 +114,13 @@ public class SmallEnemy extends Entity {
 	public void update(float delta) {
 		Vector2 vel = body.getLinearVelocity();
 		
-		body.setLinearVelocity(direction * speed, vel.y);
+		body.setLinearVelocity(speed * direction * rage, vel.y);
+		
+		if(reincarnate){
+			rage = 2.5f;
+			body.setTransform(new Vector2(12f, 18f), 0f);
+			reincarnate = false;
+		}
 	}
 
 	@Override
@@ -127,6 +145,13 @@ public class SmallEnemy extends Entity {
 	 */
 	public void changeDirection(){
 		direction *= -1;
+	}
+	
+	/**
+	 * Reincarnates the enemy as a raged enemy at the top
+	 */
+	public void reincarnate(){
+		reincarnate = true;
 	}
 
 }
