@@ -68,7 +68,7 @@ public class GameScreen implements Screen, InputProcessor {
 		viewport.apply();
 		
 		//move the camera to the center of the world
-		camera.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight() / 2, 0);
+		camera.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight() / 2 + 1, 0);
 		
 		//setup box2d world
 		debugRenderer = new Box2DDebugRenderer();
@@ -76,7 +76,7 @@ public class GameScreen implements Screen, InputProcessor {
 		
 		//load the tmx map
 		mapLoader = new TmxMapLoader();
-		map = mapLoader.load("crate.tmx");
+		map = mapLoader.load("maps/map1.tmx");
 		mapRenderer = new OrthogonalTiledMapRenderer(map, 1f / SupaBax.PPM);
 		
 		//build the box2d objects
@@ -84,6 +84,8 @@ public class GameScreen implements Screen, InputProcessor {
 		bodyBuilder.createBodies(entities, world, map);
 		
 		player = (Player) entities.get(0);
+		
+		entities.add(new SmallEnemy(world));
 	}
 
 	@Override
@@ -104,15 +106,32 @@ public class GameScreen implements Screen, InputProcessor {
 			
 			@Override
 			public void endContact(Contact contact) {
-				if(contact.getFixtureA().getUserData() == "ground sensor" || contact.getFixtureB().getUserData() == "ground sensor"){
+				//Collision with player and ground
+				if(contact.getFixtureA().getUserData() == "pgsf" || contact.getFixtureB().getUserData() == "pgsf"){
 					player.setGrounded(false);
 				}
 			}
 			
 			@Override
 			public void beginContact(Contact contact) {
-				if(contact.getFixtureA().getUserData() == "ground sensor" || contact.getFixtureB().getUserData() == "ground sensor"){
+				//Collision with player and ground
+				if(contact.getFixtureA().getUserData() == "pgsf" || contact.getFixtureB().getUserData() == "pgsf"){
 					player.setGrounded(true);
+				}
+				
+				//Collision with enemy and wall
+				if(contact.getFixtureA().getUserData() == "essf" && contact.getFixtureB().getUserData() != "ppf"){
+					SmallEnemy enemy = (SmallEnemy) contact.getFixtureA().getBody().getUserData();
+					enemy.changeDirection();
+				}
+				if(contact.getFixtureB().getUserData() == "essf" && contact.getFixtureA().getUserData() != "ppf"){
+					SmallEnemy enemy = (SmallEnemy) contact.getFixtureB().getBody().getUserData();
+					enemy.changeDirection();
+				}
+				
+				//Collision with enemy and player
+				if((contact.getFixtureA().getUserData() == "epf" && contact.getFixtureB().getUserData() == "ppf") || (contact.getFixtureB().getUserData() == "epf" && contact.getFixtureA().getUserData() == "ppf")){
+					//Game over
 				}
 			}
 		});

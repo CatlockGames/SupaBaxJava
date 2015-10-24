@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="24" height="16" tilewidth="32" tileheight="32" nextobjectid="25">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="24" height="17" tilewidth="32" tileheight="32" nextobjectid="25">
  <tileset firstgid="1" name="tilesheet" tilewidth="32" tileheight="32" tilecount="16">
-  <image source="tileset.png" width="128" height="128"/>
+  <image source="tilesets/map1.png" width="128" height="128"/>
  </tileset>
- <layer name="background" width="24" height="16">
+ <layer name="background" width="24" height="17">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAC+NgYGDgGMWjeBSP4lE84jAA5ipQ8wAGAAA=
+   H4sIAAAAAAAAC+NgYGDgGMWjeBSP4lE84jCtAQB9GZo6YAYAAA==
   </data>
  </layer>
- <layer name="foreground" width="24" height="16">
+ <layer name="foreground" width="24" height="17">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAC2NjYGBgBGImApiZAQGIVc8GxKwM2AE7DnFS1LKOmk+2+cTEIba4J9Z8agB6mA9Ko+hhgcu/+AA2M/Clf2qAgQx/eqQfLiLcyINHDha/uAAnEeZz45EDmc0LxHxAzI/GJtV8XOYIkIBhgBQ9APlbtNYABgAA
+   H4sIAAAAAAAAC2NjYGBgBGImApiZAQGIVc8GxKwM2AE7DnFS1LKOmk+2+cTEIba4J9Z8agB6mA9Ko+hhgcu/+AA2M/Clf2qAgQx/eqQfLiLcyINHDha/uAAnEeZz45EDmc0LxHxAzI/GJtV8XOYIkIBhgBw9tAIA8RVUiGAGAAA=
   </data>
  </layer>
  <objectgroup name="ground">
