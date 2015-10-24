@@ -32,6 +32,8 @@ public class SmallEnemy extends Entity {
 	
 	private Texture sheet;
 	private Animation currentAnimation;
+	private Animation walk;
+	private Animation rageWalk;
 	
 	private float stateTime;
 	
@@ -50,16 +52,23 @@ public class SmallEnemy extends Entity {
 	 * 
 	 */
 	public SmallEnemy(World world) {
-		//Setup the animation
+		//Setup the animations
 		sheet = new Texture(Gdx.files.internal("spritesheets/enemies/smallenemy.png"));
-		TextureRegion[][] temp = TextureRegion.split(sheet, 32, 32);
-
-		TextureRegion[] frames = {
-				temp[0][0], temp[0][1], temp[0][2], temp[0][3], temp[0][4], temp[0][5], 
-				temp[0][6], temp[0][7], temp[0][8], temp[0][9], temp[0][10]
-		};
-		currentAnimation = new Animation(0.1f, frames);
-		//TODO Add animations
+		TextureRegion[][] splitSheet = TextureRegion.split(sheet, 32, 32);
+		
+		TextureRegion[] walkFrames = new TextureRegion[11];
+		for(int i = 0; i < 11; i++){
+			walkFrames[i] = splitSheet[0][i];
+		}
+		walk = new Animation(0.1f, walkFrames);
+		
+		TextureRegion[] rageWalkFrames = new TextureRegion[11];
+		for(int i = 0; i < 11; i++){
+			rageWalkFrames[i] = splitSheet[0][i];
+		}
+		rageWalk = new Animation(0.05f, rageWalkFrames);
+		
+		currentAnimation = walk;
 		stateTime = 0;
 		
 		//Scale the sprite to meters
@@ -72,7 +81,6 @@ public class SmallEnemy extends Entity {
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.position.set(new Vector2(12f, 18f));
 		bodyDef.fixedRotation = true;
-		//bodyDef.bullet = true;
 		
 		body = world.createBody(bodyDef);
 		body.setUserData(this);
@@ -118,7 +126,9 @@ public class SmallEnemy extends Entity {
 		
 		if(reincarnate){
 			rage = 2.5f;
+			//Must be transformed during an update step
 			body.setTransform(new Vector2(12f, 18f), 0f);
+			currentAnimation = rageWalk;
 			reincarnate = false;
 		}
 	}
