@@ -3,6 +3,8 @@
  */
 package crate;
 
+import java.util.Random;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -49,9 +51,10 @@ public class SmallEnemy extends Entity {
 		TextureRegion[][] temp = TextureRegion.split(sheet, 32, 32);
 
 		TextureRegion[] frames = {
-				temp[1][1]
+				temp[0][0], temp[0][1], temp[0][2], temp[0][3], temp[0][4], temp[0][5], 
+				temp[0][6], temp[0][7], temp[0][8], temp[0][9], temp[0][10]
 		};
-		currentAnimation = new Animation(0.5f, frames);
+		currentAnimation = new Animation(0.1f, frames);
 		//TODO Add animations
 		stateTime = 0;
 		
@@ -86,11 +89,17 @@ public class SmallEnemy extends Entity {
 		sideSensorShape.dispose();
 		
 		physicsFixture.setFriction(0f);
+		
+		//Sets a random direction
+		Random random = new Random();
+		switch(random.nextInt(2)){
+		case 0: direction = -1f; break;
+		case 1: direction = 1f; break;
+		}
 	}
 
 	@Override
 	public void update(float delta) {
-		//Vector2 pos = body.getPosition();
 		Vector2 vel = body.getLinearVelocity();
 		
 		body.setLinearVelocity(direction * speed, vel.y);
@@ -102,7 +111,9 @@ public class SmallEnemy extends Entity {
 		sprite.setRegion(currentAnimation.getKeyFrame(stateTime, true));
 		sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2, body.getPosition().y - sprite.getHeight() / 2);
 		sprite.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
-		
+		if(direction == -1){
+			sprite.setFlip(true, false);
+		}
 		sprite.draw(batch);
 	}
 
