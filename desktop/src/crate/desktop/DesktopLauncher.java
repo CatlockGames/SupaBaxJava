@@ -11,6 +11,8 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "Supa Bax";
 		config.addIcon("crate.png", FileType.Internal);
+		config.width = 768;
+		config.height = 512;
 		new LwjglApplication(new SupaBax(), config);
 	}
 }
