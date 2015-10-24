@@ -84,8 +84,6 @@ public class GameScreen implements Screen, InputProcessor {
 		bodyBuilder.createBodies(entities, world, map);
 		
 		player = (Player) entities.get(0);
-		
-		entities.add(new SmallEnemy(world));
 	}
 
 	@Override
@@ -98,6 +96,9 @@ public class GameScreen implements Screen, InputProcessor {
 			@Override
 			public void preSolve(Contact contact, Manifold oldManifold) {
 				contact.resetFriction();
+				if(contact.getFixtureA().getUserData() == "epf" && contact.getFixtureB().getUserData() == "epf"){
+					contact.setEnabled(false);
+				}
 			}
 			
 			@Override
@@ -120,11 +121,11 @@ public class GameScreen implements Screen, InputProcessor {
 				}
 				
 				//Collision with enemy and wall
-				if(contact.getFixtureA().getUserData() == "essf" && contact.getFixtureB().getUserData() != "ppf"){
+				if(contact.getFixtureA().getUserData() == "essf" && contact.getFixtureB().getUserData() == null){
 					SmallEnemy enemy = (SmallEnemy) contact.getFixtureA().getBody().getUserData();
 					enemy.changeDirection();
 				}
-				if(contact.getFixtureB().getUserData() == "essf" && contact.getFixtureA().getUserData() != "ppf"){
+				if(contact.getFixtureB().getUserData() == "essf" && contact.getFixtureA().getUserData() == null){
 					SmallEnemy enemy = (SmallEnemy) contact.getFixtureB().getBody().getUserData();
 					enemy.changeDirection();
 				}
@@ -132,6 +133,7 @@ public class GameScreen implements Screen, InputProcessor {
 				//Collision with enemy and player
 				if((contact.getFixtureA().getUserData() == "epf" && contact.getFixtureB().getUserData() == "ppf") || (contact.getFixtureB().getUserData() == "epf" && contact.getFixtureA().getUserData() == "ppf")){
 					//Game over
+					System.out.println("Player dead");
 				}
 			}
 		});
@@ -222,6 +224,10 @@ public class GameScreen implements Screen, InputProcessor {
 		}
 		if(keycode == Input.Keys.SPACE){
 			player.setJump(true);
+		}
+		
+		if(keycode == Input.Keys.E){
+			entities.add(new SmallEnemy(world));
 		}
 		
 		return false;
