@@ -30,8 +30,9 @@ public class Player extends Entity{
 	
 	private Texture sheet;
 	private Animation currentAnimation;
-	private Animation idle;
-	private Animation walk;
+	private Animation idling;
+	private Animation walking;
+	private Animation jumping;
 	
 	private float stateTime;
 	
@@ -63,15 +64,21 @@ public class Player extends Entity{
 		for(int i = 0; i < 5; i++){
 			idleFrames[i] = splitSheet[0][i];
 		}
-		idle = new Animation(0.1f, idleFrames);
+		idling = new Animation(0.1f, idleFrames);
 		
 		TextureRegion[] walkFrames = new TextureRegion[5];
 		for(int i = 0; i < 5; i++){
 			walkFrames[i] = splitSheet[1][i];
 		}
-		walk = new Animation(0.1f, walkFrames);
+		walking = new Animation(0.1f, walkFrames);
 		
-		currentAnimation = idle;
+		TextureRegion[] jumpFrames = new TextureRegion[3];
+		for(int i = 0; i < 3; i++){
+			jumpFrames[i] = splitSheet[2][i];
+		}
+		jumping = new Animation(0.1f, jumpFrames);
+		
+		currentAnimation = idling;
 		//TODO Add animations
 		stateTime = 0;
 		
@@ -121,13 +128,14 @@ public class Player extends Entity{
 		
 		//Disable friction while jumping
 		if(!grounded){
+			currentAnimation = jumping;
 			physicsFixture.setFriction(0f);
 		} else{
 			if(!movingLeft && !movingRight){
-				currentAnimation = idle;
+				currentAnimation = idling;
 				physicsFixture.setFriction(100f);
 			} else{
-				currentAnimation = walk;
+				currentAnimation = walking;
 				physicsFixture.setFriction(0.2f);
 			}
 			//for moving platforms
