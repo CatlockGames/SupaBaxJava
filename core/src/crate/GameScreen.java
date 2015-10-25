@@ -103,6 +103,11 @@ public class GameScreen implements Screen, InputProcessor {
 				if(contact.getFixtureA().getUserData() == "epf" && contact.getFixtureB().getUserData() == "epf"){
 					contact.setEnabled(false);
 				}
+				
+				//Prevent collision between enemies and crate
+				if((contact.getFixtureA().getUserData() == "epf" && contact.getFixtureB().getUserData() == "cpf") || (contact.getFixtureB().getUserData() == "epf" && contact.getFixtureA().getUserData() == "cpf")){
+					contact.setEnabled(false);
+				}
 			}
 			
 			@Override
