@@ -136,6 +136,11 @@ public class GameScreen implements Screen, InputProcessor {
 					System.out.println("Player dead");
 				}
 				
+				//Collision with player and crate
+				if((contact.getFixtureA().getUserData() == "ppf" && contact.getFixtureB().getUserData() == "cpf") || (contact.getFixtureB().getUserData() == "ppf" && contact.getFixtureA().getUserData() == "cpf")){
+					crate.spawn();
+				}
+				
 				//Collision with enemy and wall
 				if(contact.getFixtureA().getUserData() == "essf" && contact.getFixtureB().getUserData() == null){
 					SmallEnemy enemy = (SmallEnemy) contact.getFixtureA().getBody().getUserData();
@@ -154,10 +159,6 @@ public class GameScreen implements Screen, InputProcessor {
 				if(contact.getFixtureB().getUserData() == "egsf" && contact.getFixtureA().getUserData() == "hpf"){
 					SmallEnemy enemy = (SmallEnemy) contact.getFixtureB().getBody().getUserData();
 					enemy.reincarnate();
-				}
-				
-				if((contact.getFixtureA().getUserData() == "physics fixture" && contact.getFixtureB().getUserData() == "cpf") || (contact.getFixtureB().getUserData() == "physics fixture" && contact.getFixtureA().getUserData() == "cpf")){
-					crate.spawn();
 				}
 			}
 		});
