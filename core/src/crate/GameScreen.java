@@ -128,19 +128,16 @@ public class GameScreen implements Screen, InputProcessor {
 				if(contact.getFixtureA().getUserData() == "pgsf" || contact.getFixtureB().getUserData() == "pgsf"){
 					player.setGrounded(true);
 				}
-				
 				//Collision with player and hell object
 				if((contact.getFixtureA().getUserData() == "ppf" && contact.getFixtureB().getUserData() == "hpf") || (contact.getFixtureB().getUserData() == "ppf" && contact.getFixtureA().getUserData() == "hpf")){
 					//Game over
 					System.out.println("Player dead");
 				}
-				
 				//Collision with player and enemy
 				if((contact.getFixtureA().getUserData() == "ppf" && contact.getFixtureB().getUserData() == "epf") || (contact.getFixtureB().getUserData() == "ppf" && contact.getFixtureA().getUserData() == "epf")){
 					//Game over
 					System.out.println("Player dead");
 				}
-				
 				//Collision with player and crate
 				if((contact.getFixtureA().getUserData() == "ppf" && contact.getFixtureB().getUserData() == "cpf") || (contact.getFixtureB().getUserData() == "ppf" && contact.getFixtureA().getUserData() == "cpf")){
 					crate.spawn();
@@ -148,21 +145,20 @@ public class GameScreen implements Screen, InputProcessor {
 				
 				//Collision with enemy and wall
 				if(contact.getFixtureA().getUserData() == "essf" && contact.getFixtureB().getUserData() == null){
-					SmallEnemy enemy = (SmallEnemy) contact.getFixtureA().getBody().getUserData();
+					GroundEnemy enemy = (GroundEnemy) contact.getFixtureA().getBody().getUserData();
 					enemy.changeDirection();
 				}
 				if(contact.getFixtureB().getUserData() == "essf" && contact.getFixtureA().getUserData() == null){
-					SmallEnemy enemy = (SmallEnemy) contact.getFixtureB().getBody().getUserData();
+					GroundEnemy enemy = (GroundEnemy) contact.getFixtureB().getBody().getUserData();
 					enemy.changeDirection();
 				}
-				
 				//Collision with enemy and hell object
 				if(contact.getFixtureA().getUserData() == "egsf" && contact.getFixtureB().getUserData() == "hpf"){
-					SmallEnemy enemy = (SmallEnemy) contact.getFixtureA().getBody().getUserData();
+					GroundEnemy enemy = (GroundEnemy) contact.getFixtureA().getBody().getUserData();
 					enemy.reincarnate();
 				}
 				if(contact.getFixtureB().getUserData() == "egsf" && contact.getFixtureA().getUserData() == "hpf"){
-					SmallEnemy enemy = (SmallEnemy) contact.getFixtureB().getBody().getUserData();
+					GroundEnemy enemy = (GroundEnemy) contact.getFixtureB().getBody().getUserData();
 					enemy.reincarnate();
 				}
 			}
@@ -258,6 +254,9 @@ public class GameScreen implements Screen, InputProcessor {
 		
 		if(keycode == Input.Keys.E){
 			entities.add(new SmallEnemy(world));
+		}
+		if(keycode == Input.Keys.R){
+			entities.add(new BigEnemy(world));
 		}
 		
 		return false;
