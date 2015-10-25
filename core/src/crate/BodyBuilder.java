@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.EllipseMapObject;
 import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.objects.PolylineMapObject;
@@ -44,6 +45,7 @@ public class BodyBuilder {
 	/**
 	 * Reads the objects from the tmx map and creates the corresponding box2d bodies for physics.
 	 * The first entity in the arraylist of entities has to be the player.
+	 * The second entity in the arraylist of entities is the crate
 	 * @param entities
 	 * @param world
 	 * @param map
@@ -51,6 +53,15 @@ public class BodyBuilder {
 	public void createBodies(ArrayList<Entity> entities, World world, TiledMap map){
 		
 		entities.add(new Player(world, new Vector2(2f, 4f)));
+		
+		MapObjects crates = map.getLayers().get("crate").getObjects();
+		Vector2[] crateSpawnLocations = new Vector2[crates.getCount()];
+		for(int i = 0; i < crates.getCount(); i++){
+			RectangleMapObject crate = (RectangleMapObject) crates.get(i);
+			Rectangle rect = crate.getRectangle();
+			crateSpawnLocations[i] = new Vector2((rect.x + rect.width / 2f) / SupaBax.PPM, (rect.y + rect.height / 2f) / SupaBax.PPM);
+		}
+		entities.add(new Crate(world, crateSpawnLocations));
 		
 		genBodies(world, map.getLayers().get("ground"));
 		genBodies(world, map.getLayers().get("wall"));

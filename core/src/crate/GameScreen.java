@@ -52,6 +52,7 @@ public class GameScreen implements Screen, InputProcessor {
 	//Entities in the game
 	public ArrayList<Entity> entities = new ArrayList<Entity>();
 	private Player player;
+	private Crate crate;
 
 	/**
 	 * 
@@ -84,6 +85,7 @@ public class GameScreen implements Screen, InputProcessor {
 		bodyBuilder.createBodies(entities, world, map);
 		
 		player = (Player) entities.get(0);
+		crate = (Crate) entities.get(1);
 	}
 
 	@Override
@@ -113,6 +115,10 @@ public class GameScreen implements Screen, InputProcessor {
 			public void beginContact(Contact contact) {
 				if(contact.getFixtureA().getUserData() == "ground sensor" || contact.getFixtureB().getUserData() == "ground sensor"){
 					player.setGrounded(true);
+				}
+				
+				if((contact.getFixtureA().getUserData() == "physics fixture" && contact.getFixtureB().getUserData() == "cpf") || (contact.getFixtureB().getUserData() == "physics fixture" && contact.getFixtureA().getUserData() == "cpf")){
+					crate.spawn();
 				}
 			}
 		});
