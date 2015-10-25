@@ -64,7 +64,7 @@ public class SmallEnemy extends Entity {
 		
 		TextureRegion[] rageWalkFrames = new TextureRegion[11];
 		for(int i = 0; i < 11; i++){
-			rageWalkFrames[i] = splitSheet[0][i];
+			rageWalkFrames[i] = splitSheet[1][i];
 		}
 		rageWalk = new Animation(0.05f, rageWalkFrames);
 		
