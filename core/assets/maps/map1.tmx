@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="24" height="18" tilewidth="32" tileheight="32" nextobjectid="31">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="24" height="18" tilewidth="32" tileheight="32" nextobjectid="34">
  <tileset firstgid="1" name="tilesheet" tilewidth="32" tileheight="32" tilecount="16">
   <image source="tilesets/map1.png" width="128" height="128"/>
  </tileset>
@@ -36,6 +36,8 @@
   </properties>
   <object id="23" x="0" y="0" width="32" height="512"/>
   <object id="24" x="736" y="0" width="32" height="512"/>
+  <object id="31" x="416" y="512" width="32" height="32"/>
+  <object id="32" x="320" y="512" width="32" height="32"/>
  </objectgroup>
  <objectgroup name="hell">
   <object id="29" x="352" y="544" width="64" height="32"/>
