@@ -30,6 +30,9 @@ public class Player extends Entity{
 	
 	private Texture sheet;
 	private Animation currentAnimation;
+	private Animation idling;
+	private Animation walking;
+	private Animation jumping;
 	
 	private float stateTime;
 	
@@ -47,8 +50,6 @@ public class Player extends Entity{
 	
 	private float maxSpeed = 9f;
 	
-	//private int previousDirection;
-	
 	/**
 	 * 
 	 * @param world
@@ -57,12 +58,27 @@ public class Player extends Entity{
 	public Player(World world, Vector2 position) {
 		//Setup the animation
 		sheet = new Texture(Gdx.files.internal("spritesheets/player/player.png"));
-		TextureRegion[][] temp = TextureRegion.split(sheet, 32, 32);
+		TextureRegion[][] splitSheet = TextureRegion.split(sheet, 32, 32);
 		
-		TextureRegion[] frames = {
-				temp[0][0]
-		};
-		currentAnimation = new Animation(0.5f, frames);
+		TextureRegion[]idleFrames = new TextureRegion[5];
+		for(int i = 0; i < 5; i++){
+			idleFrames[i] = splitSheet[0][i];
+		}
+		idling = new Animation(0.1f, idleFrames);
+		
+		TextureRegion[] walkFrames = new TextureRegion[5];
+		for(int i = 0; i < 5; i++){
+			walkFrames[i] = splitSheet[1][i];
+		}
+		walking = new Animation(0.1f, walkFrames);
+		
+		TextureRegion[] jumpFrames = new TextureRegion[3];
+		for(int i = 0; i < 3; i++){
+			jumpFrames[i] = splitSheet[2][i];
+		}
+		jumping = new Animation(0.1f, jumpFrames);
+		
+		currentAnimation = idling;
 		//TODO Add animations
 		stateTime = 0;
 		
@@ -112,11 +128,14 @@ public class Player extends Entity{
 		
 		//Disable friction while jumping
 		if(!grounded){
+			currentAnimation = jumping;
 			physicsFixture.setFriction(0f);
 		} else{
 			if(!movingLeft && !movingRight){
+				currentAnimation = idling;
 				physicsFixture.setFriction(100f);
 			} else{
+				currentAnimation = walking;
 				physicsFixture.setFriction(0.2f);
 			}
 			//for moving platforms
@@ -146,7 +165,9 @@ public class Player extends Entity{
 		sprite.setRegion(currentAnimation.getKeyFrame(stateTime, true));
 		sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2, body.getPosition().y - sprite.getHeight() / 2);
 		sprite.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
-		
+		if(movingLeft){
+			sprite.flip(true, false);
+		}
 		sprite.draw(batch);
 	}
 
