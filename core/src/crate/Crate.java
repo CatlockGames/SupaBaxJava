@@ -33,7 +33,7 @@ public class Crate extends Entity {
 	private float width = 1f;
 	private float height = 1f;
 	
-	private int crushCount = 0;
+	private int crushCount = -1; // -1 to account for initial crate spawn
 	private Vector2[] spawnLocations;
 	
 	private boolean spawn = false;
@@ -72,6 +72,7 @@ public class Crate extends Entity {
 		if(spawn){
 			spawn = false;
 			crushCount++;
+			System.out.println(crushCount);
 			body.setLinearVelocity(new Vector2(0f, 0f));
 			body.setTransform(spawnLocations[random.nextInt(spawnLocations.length)], 0f);
 		}
