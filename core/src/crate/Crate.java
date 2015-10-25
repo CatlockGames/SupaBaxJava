@@ -72,7 +72,6 @@ public class Crate extends Entity {
 		if(spawn){
 			spawn = false;
 			crushCount++;
-			System.out.println(crushCount);
 			body.setLinearVelocity(new Vector2(0f, 0f));
 			body.setTransform(spawnLocations[random.nextInt(spawnLocations.length)], 0f);
 		}
