@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="24" height="18" tilewidth="32" tileheight="32" nextobjectid="34">
+ <tileset firstgid="1" name="tilesheet" tilewidth="32" tileheight="32" tilecount="16">
+  <image source="tilesets/map1.png" width="128" height="128"/>
+ </tileset>
+ <layer name="background" width="24" height="18">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+NgYGDgGMWjeBSP4lE84vBQBwBDNc29wAYAAA==
+  </data>
+ </layer>
+ <layer name="foreground" width="24" height="18">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC2NjYGBgBGImApiZAQGIVc8GxKwM2AE7DnFS1LKOmk+2+cTEIba4J9Z8agB6mA9Ko+hhgcu/+AA2M/Clf2qAgQx/eqQfLiLcyINHDha/uAAnEeZz45EDmc0LxHxAzI/GJtV8XOYIkIBhgBw9QxUAAN8tUR3ABgAA
+  </data>
+ </layer>
+ <objectgroup name="ground">
+  <properties>
+   <property name="friction" value="0.2f"/>
+   <property name="restitution" value="0f"/>
+  </properties>
+  <object id="5" x="32" y="480" width="320" height="32"/>
+  <object id="7" x="416" y="480" width="320" height="32"/>
+  <object id="13" x="576" y="256" width="160" height="32"/>
+  <object id="14" x="576" y="448" width="160" height="32"/>
+  <object id="16" x="192" y="352" width="384" height="32"/>
+  <object id="17" x="32" y="448" width="160" height="32"/>
+  <object id="18" x="32" y="256" width="160" height="32"/>
+  <object id="19" x="192" y="160" width="384" height="32"/>
+  <object id="20" x="32" y="0" width="320" height="32"/>
+  <object id="21" x="416" y="0" width="320" height="32"/>
+ </objectgroup>
+ <objectgroup name="wall">
+  <properties>
+   <property name="friction" value="0.2f"/>
+   <property name="restitution" value="0f"/>
+  </properties>
+  <object id="23" x="0" y="0" width="32" height="512"/>
+  <object id="24" x="736" y="0" width="32" height="512"/>
+  <object id="31" x="416" y="512" width="32" height="32"/>
+  <object id="32" x="320" y="512" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup name="hell">
+  <object id="29" x="352" y="544" width="64" height="32"/>
+ </objectgroup>
+</map>

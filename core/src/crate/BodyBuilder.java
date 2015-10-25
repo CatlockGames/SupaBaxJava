@@ -51,8 +51,8 @@ public class BodyBuilder {
 	 * @param map
 	 */
 	public void createBodies(ArrayList<Entity> entities, World world, TiledMap map){
-		
-		entities.add(new Player(world, new Vector2(2f, 4f)));
+		//Add the player to the map
+		entities.add(new Player(world, new Vector2(12f, 9f)));
 		
 		MapObjects crates = map.getLayers().get("crate").getObjects();
 		Vector2[] crateSpawnLocations = new Vector2[crates.getCount()];
@@ -66,14 +66,12 @@ public class BodyBuilder {
 		genBodies(world, map.getLayers().get("ground"));
 		genBodies(world, map.getLayers().get("wall"));
 		
-		/*
-		objects = map.getLayers().get("dynamic").getObjects();
-		for(MapObject object : objects){
+		//Generate hell objects
+		for(MapObject object : map.getLayers().get("hell").getObjects()){
 			RectangleMapObject entity = (RectangleMapObject) object;
-			Rectangle position = entity.getRectangle();
-			entities.add(new Box(world, new Vector2(position.x / SupaBox.PPM, position.y / SupaBox.PPM), new Vector2(0f, 0f), 1f, 1f));
+			Rectangle rect = entity.getRectangle();
+			entities.add(new HellObject(world, new Vector2((rect.x + rect.width / 2f) / SupaBax.PPM, (rect.y + rect.height / 2f) / SupaBax.PPM), rect.width / SupaBax.PPM, rect.height / SupaBax.PPM));
 		}
-		*/
 	}
 	
 	/**

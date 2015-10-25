@@ -65,19 +65,19 @@ public class GameScreen implements Screen, InputProcessor {
 		
 		//create the camera and setup the viewport
 		camera = new OrthographicCamera();
-		viewport = new FitViewport(24, 16, camera);
+		viewport = new FitViewport(24f, 16f, camera);
 		viewport.apply();
 		
-		//move the camera to the center of the world
-		camera.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight() / 2, 0);
+		//set the initial position of the camera
+		camera.position.set(viewport.getWorldWidth() / 2f, viewport.getWorldHeight() / 2f + 2f, 0f);
 		
 		//setup box2d world
 		debugRenderer = new Box2DDebugRenderer();
-		world = new World(new Vector2(0, -50f), true);
+		world = new World(new Vector2(0f, -50f), true);
 		
 		//load the tmx map
 		mapLoader = new TmxMapLoader();
-		map = mapLoader.load("crate.tmx");
+		map = mapLoader.load("maps/map1.tmx");
 		mapRenderer = new OrthogonalTiledMapRenderer(map, 1f / SupaBax.PPM);
 		
 		//build the box2d objects
@@ -98,6 +98,11 @@ public class GameScreen implements Screen, InputProcessor {
 			@Override
 			public void preSolve(Contact contact, Manifold oldManifold) {
 				contact.resetFriction();
+				
+				//Prevent collision between enemies
+				if(contact.getFixtureA().getUserData() == "epf" && contact.getFixtureB().getUserData() == "epf"){
+					contact.setEnabled(false);
+				}
 			}
 			
 			@Override
@@ -106,15 +111,49 @@ public class GameScreen implements Screen, InputProcessor {
 			
 			@Override
 			public void endContact(Contact contact) {
-				if(contact.getFixtureA().getUserData() == "ground sensor" || contact.getFixtureB().getUserData() == "ground sensor"){
+				//Collision with player and ground
+				if(contact.getFixtureA().getUserData() == "pgsf" || contact.getFixtureB().getUserData() == "pgsf"){
 					player.setGrounded(false);
 				}
 			}
 			
 			@Override
 			public void beginContact(Contact contact) {
-				if(contact.getFixtureA().getUserData() == "ground sensor" || contact.getFixtureB().getUserData() == "ground sensor"){
+				//Collision with player and ground
+				if(contact.getFixtureA().getUserData() == "pgsf" || contact.getFixtureB().getUserData() == "pgsf"){
 					player.setGrounded(true);
+				}
+				
+				//Collision with player and hell object
+				if((contact.getFixtureA().getUserData() == "ppf" && contact.getFixtureB().getUserData() == "hpf") || (contact.getFixtureB().getUserData() == "ppf" && contact.getFixtureA().getUserData() == "hpf")){
+					//Game over
+					System.out.println("Player dead");
+				}
+				
+				//Collision with player and enemy
+				if((contact.getFixtureA().getUserData() == "ppf" && contact.getFixtureB().getUserData() == "epf") || (contact.getFixtureB().getUserData() == "ppf" && contact.getFixtureA().getUserData() == "epf")){
+					//Game over
+					System.out.println("Player dead");
+				}
+				
+				//Collision with enemy and wall
+				if(contact.getFixtureA().getUserData() == "essf" && contact.getFixtureB().getUserData() == null){
+					SmallEnemy enemy = (SmallEnemy) contact.getFixtureA().getBody().getUserData();
+					enemy.changeDirection();
+				}
+				if(contact.getFixtureB().getUserData() == "essf" && contact.getFixtureA().getUserData() == null){
+					SmallEnemy enemy = (SmallEnemy) contact.getFixtureB().getBody().getUserData();
+					enemy.changeDirection();
+				}
+				
+				//Collision with enemy and hell object
+				if(contact.getFixtureA().getUserData() == "egsf" && contact.getFixtureB().getUserData() == "hpf"){
+					SmallEnemy enemy = (SmallEnemy) contact.getFixtureA().getBody().getUserData();
+					enemy.reincarnate();
+				}
+				if(contact.getFixtureB().getUserData() == "egsf" && contact.getFixtureA().getUserData() == "hpf"){
+					SmallEnemy enemy = (SmallEnemy) contact.getFixtureB().getBody().getUserData();
+					enemy.reincarnate();
 				}
 				
 				if((contact.getFixtureA().getUserData() == "physics fixture" && contact.getFixtureB().getUserData() == "cpf") || (contact.getFixtureB().getUserData() == "physics fixture" && contact.getFixtureA().getUserData() == "cpf")){
@@ -209,6 +248,10 @@ public class GameScreen implements Screen, InputProcessor {
 		}
 		if(keycode == Input.Keys.SPACE){
 			player.setJump(true);
+		}
+		
+		if(keycode == Input.Keys.E){
+			entities.add(new SmallEnemy(world));
 		}
 		
 		return false;

@@ -25,7 +25,7 @@ import com.badlogic.gdx.physics.box2d.World;
  */
 public class Player extends Entity{
 	private Body body;
-	private Fixture bodyFixture;
+	private Fixture physicsFixture;
 	private Fixture groundSensorFixture;
 	
 	private Texture sheet;
@@ -56,8 +56,8 @@ public class Player extends Entity{
 	 */
 	public Player(World world, Vector2 position) {
 		//Setup the animation
-		sheet = new Texture(Gdx.files.internal("tileset.png"));
-		TextureRegion[][] temp = TextureRegion.split(sheet, (int) (width * SupaBax.PPM), (int) (height * SupaBax.PPM));
+		sheet = new Texture(Gdx.files.internal("spritesheets/player/player.png"));
+		TextureRegion[][] temp = TextureRegion.split(sheet, 32, 32);
 		
 		TextureRegion[] frames = {
 				temp[0][0]
@@ -82,19 +82,19 @@ public class Player extends Entity{
 		body.setUserData(this);
 		
 		//player body shape definition
-		PolygonShape bodyShape = new PolygonShape();
-		bodyShape.setAsBox(width / 2f, height / 2f);
-		bodyFixture = body.createFixture(bodyShape, 1f);
-		bodyFixture.setUserData("physics fixture");
+		PolygonShape physicsShape = new PolygonShape();
+		physicsShape.setAsBox(width / 2f, height / 2f);
+		physicsFixture = body.createFixture(physicsShape, 1f);
+		physicsFixture.setUserData("ppf");
 		
 		//Ground sensor shape definition
 		PolygonShape groundSensorShape = new PolygonShape();
 		groundSensorShape.setAsBox(width / 2.5f, height / 6f, new Vector2(0f, -height / 2f), 0f);
 		groundSensorFixture = body.createFixture(groundSensorShape, 0f);
 		groundSensorFixture.setSensor(true);
-		groundSensorFixture.setUserData("ground sensor");
+		groundSensorFixture.setUserData("pgsf");
 
-		bodyShape.dispose();
+		physicsShape.dispose();
 		groundSensorShape.dispose();
 	}
 
@@ -112,12 +112,12 @@ public class Player extends Entity{
 		
 		//Disable friction while jumping
 		if(!grounded){
-			bodyFixture.setFriction(0f);
+			physicsFixture.setFriction(0f);
 		} else{
 			if(!movingLeft && !movingRight){
-				bodyFixture.setFriction(100f);
+				physicsFixture.setFriction(100f);
 			} else{
-				bodyFixture.setFriction(0.2f);
+				physicsFixture.setFriction(0.2f);
 			}
 			//for moving platforms
 			//body.applyLinearImpulse(new Vector2(0f, -20f), pos, true);
