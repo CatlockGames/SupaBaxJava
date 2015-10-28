@@ -49,6 +49,8 @@ public class Player extends Entity{
 	private float height = 1;
 	
 	private float maxSpeed = 9f;
+	private float speed = 2f;
+	private float direction = 1f;
 	
 	/**
 	 * 
@@ -144,12 +146,13 @@ public class Player extends Entity{
 		
 		//Move left if below the max speed
 		if(movingLeft && vel.x > -maxSpeed){
-			body.applyLinearImpulse(new Vector2(-2f, 0f), pos, true);
+			body.applyLinearImpulse(new Vector2(-speed, 0f), pos, true);
 		}
 		//Move right if below the max speed
 		if(movingRight && vel.x < maxSpeed){
-			body.applyLinearImpulse(new Vector2(2f, 0f), pos, true);
+			body.applyLinearImpulse(new Vector2(speed, 0f), pos, true);
 		}
+		
 		//Jump if grounded
 		if(jump){
 			jump = false;
@@ -165,7 +168,7 @@ public class Player extends Entity{
 		sprite.setRegion(currentAnimation.getKeyFrame(stateTime, true));
 		sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2, body.getPosition().y - sprite.getHeight() / 2);
 		sprite.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
-		if(movingLeft){
+		if(direction == -1f){
 			sprite.flip(true, false);
 		}
 		sprite.draw(batch);
@@ -206,6 +209,9 @@ public class Player extends Entity{
 	 */
 	public void setMovingLeft(boolean movingLeft) {
 		this.movingLeft = movingLeft;
+		if(movingLeft){
+			direction = -1f;
+		}
 	}
 
 	/**
@@ -214,5 +220,8 @@ public class Player extends Entity{
 	 */
 	public void setMovingRight(boolean movingRight) {
 		this.movingRight = movingRight;
+		if (movingRight) {
+			direction = 1f;
+		}
 	}
 }
