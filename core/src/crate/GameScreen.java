@@ -161,6 +161,11 @@ public class GameScreen implements Screen, InputProcessor {
 				if((contact.getFixtureA().getUserData() == "pgsf" && contact.getFixtureB().getUserData() == "bpf") || (contact.getFixtureB().getUserData() == "pgsf" && contact.getFixtureA().getUserData() == "bpf")){
 					contact.setEnabled(false);
 				}
+				
+				//Prevent collision between bullets
+				if((contact.getFixtureA().getUserData() == "bpf" && contact.getFixtureB().getUserData() == "bpf") || (contact.getFixtureB().getUserData() == "bpf" && contact.getFixtureA().getUserData() == "bpf")){
+					contact.setEnabled(false);
+				}
 			}
 			
 			@Override
