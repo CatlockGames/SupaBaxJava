@@ -14,16 +14,22 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+
+import weapon.Pistol;
+
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 /**
+ * The player, aka center of attention where all the fun happens.
  * @author Ryan
  * @author Aaron
  *
  */
 public class Player extends Entity{
+	private World world;
+	
 	private Body body;
 	private Fixture physicsFixture;
 	private Fixture groundSensorFixture;
@@ -42,8 +48,10 @@ public class Player extends Entity{
 	private boolean movingLeft;
 	private boolean movingRight;
 	private boolean jump = false;
-	
 	private boolean grounded = false;
+	private boolean firing = false;
+	
+	private int groundContacts = 0;
 	
 	private float width = 1;
 	private float height = 1;
@@ -52,12 +60,17 @@ public class Player extends Entity{
 	private float speed = 2f;
 	private float direction = 1f;
 	
+	private Pistol pistol;
+	
 	/**
 	 * 
-	 * @param world
+	 * @param gameScreen
 	 * @param position
 	 */
-	public Player(World world, Vector2 position) {
+	public Player(GameScreen gameScreen, Vector2 position) {
+		super(gameScreen);
+		this.world = gameScreen.getWorld();
+		
 		//Setup the animation
 		sheet = new Texture(Gdx.files.internal("spritesheets/player/player.png"));
 		TextureRegion[][] splitSheet = TextureRegion.split(sheet, 32, 32);
@@ -114,6 +127,9 @@ public class Player extends Entity{
 
 		physicsShape.dispose();
 		groundSensorShape.dispose();
+		
+		pistol = new Pistol(gameScreen);
+		gameScreen.addEntity(pistol);
 	}
 
 	@Override
@@ -128,6 +144,12 @@ public class Player extends Entity{
 			body.setLinearVelocity(vel);
 		}
 		
+		//Set if grounded based on ground contacts
+		if(groundContacts > 0){
+			grounded = true;
+		} else{
+			grounded = false;
+		}
 		//Disable friction while jumping
 		if(!grounded){
 			currentAnimation = jumping;
@@ -160,6 +182,14 @@ public class Player extends Entity{
 				body.applyLinearImpulse(new Vector2(0f, 19f), pos, true);
 			}
 		}
+		
+		//Shoot
+		if(firing){
+			pistol.fire(direction);
+			if(!pistol.isAutomatic()){
+				firing = false;
+			}
+		}
 	}
 
 	@Override
@@ -181,6 +211,20 @@ public class Player extends Entity{
 	
 	/**
 	 * 
+	 */
+	public void addGroundContact(){
+		groundContacts++;
+	}
+	
+	/**
+	 * 
+	 */
+	public void removeGroundContact(){
+		groundContacts--;
+	}
+	
+	/**
+	 * Gets the current position of the player.
 	 * @return
 	 */
 	public Vector2 getPosition(){
@@ -188,23 +232,15 @@ public class Player extends Entity{
 	}
 
 	/**
-	 * 
+	 * Sets if the player wants to jump or not (not actually jump)
 	 * @param jump
 	 */
 	public void setJump(boolean jump){
 		this.jump = jump;
 	}
-	
-	/**
-	 * 
-	 * @param grounded
-	 */
-	public void setGrounded(boolean grounded){
-		this.grounded = grounded;
-	}
 
 	/**
-	 * 
+	 * Sets if the player is moving left or not.
 	 * @param movingLeft
 	 */
 	public void setMovingLeft(boolean movingLeft) {
@@ -215,7 +251,7 @@ public class Player extends Entity{
 	}
 
 	/**
-	 * 
+	 * Sets if the player is moving right or not.
 	 * @param movingRight
 	 */
 	public void setMovingRight(boolean movingRight) {
@@ -223,5 +259,13 @@ public class Player extends Entity{
 		if (movingRight) {
 			direction = 1f;
 		}
+	}
+	
+	/**
+	 * Sets if the player wants to fire its weapon.
+	 * @param firing
+	 */
+	public void setFiring(boolean firing){
+		this.firing = firing;
 	}
 }

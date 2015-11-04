@@ -3,8 +3,6 @@
  */
 package crate;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -35,6 +33,8 @@ import com.badlogic.gdx.physics.box2d.World;
  *
  */
 public class BodyBuilder {
+	private World world;
+	private TiledMap map;
 
 	/**
 	 * 
@@ -46,13 +46,14 @@ public class BodyBuilder {
 	 * Reads the objects from the tmx map and creates the corresponding box2d bodies for physics.
 	 * The first entity in the arraylist of entities has to be the player.
 	 * The second entity in the arraylist of entities is the crate
-	 * @param entities
-	 * @param world
-	 * @param map
+	 * @param gameScreen
 	 */
-	public void createBodies(ArrayList<Entity> entities, World world, TiledMap map){
+	public void createBodies(GameScreen gameScreen){
+		world = gameScreen.getWorld();
+		map = gameScreen.getMap();
+		
 		//Add the player to the map
-		entities.add(new Player(world, new Vector2(12f, 9f)));
+		gameScreen.addEntity(new Player(gameScreen, new Vector2(12f, 9f)));
 		
 		MapObjects crates = map.getLayers().get("crate").getObjects();
 		Vector2[] crateSpawnLocations = new Vector2[crates.getCount()];
@@ -61,34 +62,33 @@ public class BodyBuilder {
 			Rectangle rect = crate.getRectangle();
 			crateSpawnLocations[i] = new Vector2((rect.x + rect.width / 2f) / SupaBax.PPM, (rect.y + rect.height / 2f) / SupaBax.PPM);
 		}
-		entities.add(new Crate(world, crateSpawnLocations));
+		gameScreen.addEntity(new Crate(gameScreen, crateSpawnLocations));
 		
-		genBodies(world, map.getLayers().get("ground"));
-		genBodies(world, map.getLayers().get("wall"));
+		genBodies(map.getLayers().get("ground"));
+		genBodies(map.getLayers().get("wall"));
 		
 		//Generate hell objects
 		for(MapObject object : map.getLayers().get("hell").getObjects()){
 			RectangleMapObject entity = (RectangleMapObject) object;
 			Rectangle rect = entity.getRectangle();
-			entities.add(new HellObject(world, new Vector2((rect.x + rect.width / 2f) / SupaBax.PPM, (rect.y + rect.height / 2f) / SupaBax.PPM), rect.width / SupaBax.PPM, rect.height / SupaBax.PPM));
+			gameScreen.addEntity(new HellObject(gameScreen, new Vector2((rect.x + rect.width / 2f) / SupaBax.PPM, (rect.y + rect.height / 2f) / SupaBax.PPM), rect.width / SupaBax.PPM, rect.height / SupaBax.PPM));
 		}
 	}
 	
 	/**
 	 * Generates static box2d bodies of the world of a given map layer
-	 * @param world
 	 * @param layer
 	 */
-	private void genBodies(World world, MapLayer layer){
+	private void genBodies(MapLayer layer){
 		for(MapObject object : layer.getObjects()){
 			if(object instanceof RectangleMapObject){
-				createRectangle(world, (RectangleMapObject) object, Float.parseFloat((String) layer.getProperties().get("friction")), Float.parseFloat((String) layer.getProperties().get("restitution")));
+				createRectangle((RectangleMapObject) object, Float.parseFloat((String) layer.getProperties().get("friction")), Float.parseFloat((String) layer.getProperties().get("restitution")));
 			} else if(object instanceof PolygonMapObject){
-				createPolygon(world, (PolygonMapObject) object, Float.parseFloat((String) layer.getProperties().get("friction")), Float.parseFloat((String) layer.getProperties().get("restitution")));
+				createPolygon((PolygonMapObject) object, Float.parseFloat((String) layer.getProperties().get("friction")), Float.parseFloat((String) layer.getProperties().get("restitution")));
 			} else if(object instanceof PolylineMapObject){
-				createPolyline(world, (PolylineMapObject) object, Float.parseFloat((String) layer.getProperties().get("friction")), Float.parseFloat((String) layer.getProperties().get("restitution")));
+				createPolyline((PolylineMapObject) object, Float.parseFloat((String) layer.getProperties().get("friction")), Float.parseFloat((String) layer.getProperties().get("restitution")));
 			} else if(object instanceof EllipseMapObject){
-				createEllipse(world, (EllipseMapObject) object, Float.parseFloat((String) layer.getProperties().get("friction")), Float.parseFloat((String) layer.getProperties().get("restitution")));
+				createEllipse((EllipseMapObject) object, Float.parseFloat((String) layer.getProperties().get("friction")), Float.parseFloat((String) layer.getProperties().get("restitution")));
 			} else{
 				Gdx.app.error("Error", "Invalid map object");
 			}
@@ -97,12 +97,11 @@ public class BodyBuilder {
 	
 	/**
 	 * Creates a rectangle box2d object in the box2d world
-	 * @param world
 	 * @param rectangleObject
 	 * @param friction
 	 * @param restitution
 	 */
-	private void createRectangle(World world, RectangleMapObject rectangleObject, float friction, float restitution){
+	private void createRectangle(RectangleMapObject rectangleObject, float friction, float restitution){
 		Rectangle rect = rectangleObject.getRectangle();
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox(rect.width / SupaBax.PPM / 2f, rect.height / SupaBax.PPM / 2f);
@@ -120,12 +119,11 @@ public class BodyBuilder {
 	
 	/**
 	 * Creates a polygon box2d object in the box2d world
-	 * @param world
 	 * @param polygonObject
 	 * @param friction
 	 * @param restitution
 	 */
-	private void createPolygon(World world, PolygonMapObject polygonObject, float friction, float restitution){
+	private void createPolygon(PolygonMapObject polygonObject, float friction, float restitution){
 		Polygon polygon = polygonObject.getPolygon();
 		PolygonShape shape = new PolygonShape();
 		float[] vertices = polygon.getTransformedVertices();
@@ -154,12 +152,11 @@ public class BodyBuilder {
 	
 	/**
 	 * Creates a chain box2d object in the box2d world
-	 * @param world
 	 * @param polylineObject
 	 * @param friction
 	 * @param restitution
 	 */
-	private void createPolyline(World world, PolylineMapObject polylineObject, float friction, float restitution){
+	private void createPolyline(PolylineMapObject polylineObject, float friction, float restitution){
 		Polyline polyline = polylineObject.getPolyline();
 		ChainShape shape = new ChainShape();
 		float[] vertices = polyline.getTransformedVertices();
@@ -188,12 +185,11 @@ public class BodyBuilder {
 	
 	/**
 	 * Creates a circle box2d object in the box2d world
-	 * @param world
 	 * @param ellipseObject
 	 * @param friction
 	 * @param restitution
 	 */
-	private void createEllipse(World world, EllipseMapObject ellipseObject, float friction, float restitution){
+	private void createEllipse(EllipseMapObject ellipseObject, float friction, float restitution){
 		Ellipse circle = ellipseObject.getEllipse();
 		CircleShape shape = new CircleShape();
 		shape.setRadius(circle.width / 2f / SupaBax.PPM);

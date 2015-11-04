@@ -1,18 +1,17 @@
 package crate;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 /**
- * 
+ * The main game class with the super render method that handles the different screens.
  * @author Aaron
  * @author Ryan
  *
  */
 
 public class SupaBax extends Game {
-	SpriteBatch batch;
+	public SpriteBatch batch;
 	
 	//Screens
 	public GameScreen gameScreen;
@@ -27,6 +26,7 @@ public class SupaBax extends Game {
 		
 		this.setScreen(gameScreen);
 		
+		//Sets the display mode to full screen
 		//Gdx.graphics.setDisplayMode(Gdx.graphics.getDesktopDisplayMode().width, Gdx.graphics.getDesktopDisplayMode().height, true);
 	}
 

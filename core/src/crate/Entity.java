@@ -6,16 +6,20 @@ package crate;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 /**
+ * This class is an abstract definition of an entity.
  * @author Aaron
  * @author Ryan
  *
  */
 public abstract class Entity {
+	protected GameScreen gameScreen;
 
 	/**
 	 * 
+	 * @param gameScreen
 	 */
-	public Entity(){
+	public Entity(GameScreen gameScreen){
+		this.gameScreen = gameScreen;
 	}
 	
 	/**

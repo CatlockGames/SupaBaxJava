@@ -24,6 +24,10 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import enemy.BigEnemy;
+import enemy.GroundEnemy;
+import enemy.SmallEnemy;
+
 /**
  * @author Aaron
  * @author Ryan
@@ -50,7 +54,7 @@ public class GameScreen implements Screen, InputProcessor {
 	private Viewport viewport;
 	
 	//Entities in the game
-	public ArrayList<Entity> entities = new ArrayList<Entity>();
+	private ArrayList<Entity> entities = new ArrayList<Entity>();
 	private Player player;
 	private Crate crate;
 
@@ -82,10 +86,51 @@ public class GameScreen implements Screen, InputProcessor {
 		
 		//build the box2d objects
 		bodyBuilder = new BodyBuilder();
-		bodyBuilder.createBodies(entities, world, map);
+		bodyBuilder.createBodies(this);
 		
-		player = (Player) entities.get(0);
-		crate = (Crate) entities.get(1);
+		player = (Player) entities.get(1);
+		crate = (Crate) entities.get(2);
+	}
+	
+	/**
+	 * Adds a new entity to the game screen.
+	 * @param entity
+	 */
+	public void addEntity(Entity entity){
+		/*
+		if(entity instanceof Player){
+			entities.add(0, entity);
+		} else if(entity instanceof Crate){
+			entities.add(1, entity);
+		} else{
+			entities.add(entity);
+		}
+		*/
+		entities.add(entity);
+	}
+	
+	/**
+	 * Gets the player
+	 * @return
+	 */
+	public Player getPlayer(){
+		return player;
+	}
+	
+	/**
+	 * Gets the box2d world.
+	 * @return
+	 */
+	public World getWorld(){
+		return world;
+	}
+	
+	/**
+	 * Gets the tiled map.
+	 * @return
+	 */
+	public TiledMap getMap(){
+		return map;
 	}
 
 	@Override
@@ -108,6 +153,14 @@ public class GameScreen implements Screen, InputProcessor {
 				if((contact.getFixtureA().getUserData() == "epf" && contact.getFixtureB().getUserData() == "cpf") || (contact.getFixtureB().getUserData() == "epf" && contact.getFixtureA().getUserData() == "cpf")){
 					contact.setEnabled(false);
 				}
+				
+				//Prevent collision between player and bullets
+				if((contact.getFixtureA().getUserData() == "ppf" && contact.getFixtureB().getUserData() == "bpf") || (contact.getFixtureB().getUserData() == "ppf" && contact.getFixtureA().getUserData() == "bpf")){
+					contact.setEnabled(false);
+				}
+				if((contact.getFixtureA().getUserData() == "pgsf" && contact.getFixtureB().getUserData() == "bpf") || (contact.getFixtureB().getUserData() == "pgsf" && contact.getFixtureA().getUserData() == "bpf")){
+					contact.setEnabled(false);
+				}
 			}
 			
 			@Override
@@ -118,7 +171,7 @@ public class GameScreen implements Screen, InputProcessor {
 			public void endContact(Contact contact) {
 				//Collision with player and ground
 				if(contact.getFixtureA().getUserData() == "pgsf" || contact.getFixtureB().getUserData() == "pgsf"){
-					player.setGrounded(false);
+					player.removeGroundContact();
 				}
 			}
 			
@@ -126,7 +179,7 @@ public class GameScreen implements Screen, InputProcessor {
 			public void beginContact(Contact contact) {
 				//Collision with player and ground
 				if(contact.getFixtureA().getUserData() == "pgsf" || contact.getFixtureB().getUserData() == "pgsf"){
-					player.setGrounded(true);
+					player.addGroundContact();
 				}
 				//Collision with player and hell object
 				if((contact.getFixtureA().getUserData() == "ppf" && contact.getFixtureB().getUserData() == "hpf") || (contact.getFixtureB().getUserData() == "ppf" && contact.getFixtureA().getUserData() == "hpf")){
@@ -170,8 +223,8 @@ public class GameScreen implements Screen, InputProcessor {
 	 * @param delta
 	 */
 	public void update(float delta){
-		for(Entity entity : entities){
-			entity.update(delta);
+		for(int i = 0; i < entities.size(); i++){
+			entities.get(i).update(delta);
 		}
 		
 		world.step(delta, 6, 2);
@@ -191,8 +244,8 @@ public class GameScreen implements Screen, InputProcessor {
 			
 			game.batch.setProjectionMatrix(camera.combined);
 			game.batch.begin();
-			for(Entity entity : entities){
-				entity.render(game.batch, delta);
+			for(int i = 0; i < entities.size(); i++){
+				entities.get(i).render(game.batch, delta);
 			}
 			game.batch.end();
 		} else{
@@ -220,8 +273,8 @@ public class GameScreen implements Screen, InputProcessor {
 	@Override
 	public void dispose() {
 		//dispose of all game entities
-		for(Entity entity : entities){
-			entity.dispose();
+		for(int i = 0; i < entities.size(); i++){
+			entities.get(i).dispose();
 		}
 		world.dispose();
 		debugRenderer.dispose();
@@ -243,20 +296,24 @@ public class GameScreen implements Screen, InputProcessor {
 		}
 		
 		//Handle player movement
-		if(keycode == Input.Keys.A){
+		if(keycode == Input.Keys.LEFT){
 			player.setMovingLeft(true);
-		} else if(keycode == Input.Keys.D){
+		} else if(keycode == Input.Keys.RIGHT){
 			player.setMovingRight(true);
 		}
-		if(keycode == Input.Keys.SPACE){
+		if(keycode == Input.Keys.UP){
 			player.setJump(true);
 		}
+		if(keycode == Input.Keys.X){
+			player.setFiring(true);
+		}
 		
+		//Debug enemies
 		if(keycode == Input.Keys.E){
-			entities.add(new SmallEnemy(world));
+			entities.add(new SmallEnemy(this));
 		}
 		if(keycode == Input.Keys.R){
-			entities.add(new BigEnemy(world));
+			entities.add(new BigEnemy(this));
 		}
 		
 		return false;
@@ -264,13 +321,16 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean keyUp(int keycode) {
-		if(keycode == Input.Keys.A){
+		if(keycode == Input.Keys.LEFT){
 			player.setMovingLeft(false);
-		} else if(keycode == Input.Keys.D){
+		} else if(keycode == Input.Keys.RIGHT){
 			player.setMovingRight(false);
 		}
-		if(keycode == Input.Keys.SPACE){
+		if(keycode == Input.Keys.UP){
 			player.setJump(false);
+		}
+		if(keycode == Input.Keys.X){
+			player.setFiring(false);
 		}
 		
 		return false;
