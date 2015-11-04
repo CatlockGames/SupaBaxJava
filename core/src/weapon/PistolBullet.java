@@ -33,16 +33,15 @@ public class PistolBullet extends Bullet {
 	 * @param direction
 	 */
 	public PistolBullet(GameScreen gameScreen, Vector2 position, float direction) {
-		super(gameScreen, direction, 0.25f, 0.25f, 1f, 1f);
+		super(gameScreen, direction, 0.5f, 0.5f, 1f, 1f);
 		this.world = gameScreen.getWorld();
 		
 		//Setup the animations
-		//sheet = new Texture(Gdx.files.internal("spritesheets/weapons/pistol/pistolBullet.png"));
-		sheet = new Texture(Gdx.files.internal("spritesheets/player/player.png"));
+		sheet = new Texture(Gdx.files.internal("spritesheets/weapons/basicbullet.png"));
 		TextureRegion[][] splitSheet = TextureRegion.split(sheet, 32, 32);
 		
-		TextureRegion[] animationFrames = new TextureRegion[5];
-		for(int i = 0; i < 5; i++){
+		TextureRegion[] animationFrames = new TextureRegion[4];
+		for(int i = 0; i < 4; i++){
 			animationFrames[i] = splitSheet[0][i];
 		}
 		animation = new Animation(0.1f, animationFrames);
