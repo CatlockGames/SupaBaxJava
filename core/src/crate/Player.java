@@ -207,6 +207,8 @@ public class Player extends Entity{
 	@Override
 	public void dispose() {
 		sheet.dispose();
+		
+		System.out.println("Player disposed");
 	}
 	
 	/**

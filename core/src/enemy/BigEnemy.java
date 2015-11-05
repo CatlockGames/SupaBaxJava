@@ -130,6 +130,7 @@ public class BigEnemy extends GroundEnemy {
 	@Override
 	public void dispose() {
 		sheet.dispose();
+		System.out.println("BigEnemy disposed");
 	}
 
 }

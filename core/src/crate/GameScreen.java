@@ -4,6 +4,7 @@
 package crate;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -27,6 +28,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import enemy.BigEnemy;
 import enemy.GroundEnemy;
 import enemy.SmallEnemy;
+import weapon.Bullet;
 
 /**
  * @author Aaron
@@ -206,6 +208,16 @@ public class GameScreen implements Screen, InputProcessor {
 					crate.spawn();
 				}
 				
+				//Delete bullets if they collide with something collidable
+				if(contact.getFixtureA().getUserData() == "bpf" && contact.getFixtureB().getUserData() != "cpf"){
+					Bullet bullet = (Bullet) contact.getFixtureA().getBody().getUserData();
+					bullet.scheduleDestruction();
+				}
+				if(contact.getFixtureB().getUserData() == "bpf" && contact.getFixtureA().getUserData() != "cpf"){
+					Bullet bullet = (Bullet) contact.getFixtureB().getBody().getUserData();
+					bullet.scheduleDestruction();
+				}
+				
 				//Collision with enemy and wall
 				if(contact.getFixtureA().getUserData() == "essf" && contact.getFixtureB().getUserData() == null){
 					GroundEnemy enemy = (GroundEnemy) contact.getFixtureA().getBody().getUserData();
@@ -235,6 +247,20 @@ public class GameScreen implements Screen, InputProcessor {
 	public void update(float delta){
 		for(int i = 0; i < entities.size(); i++){
 			entities.get(i).update(delta);
+		}
+		
+		//Delete entities if needed
+		Iterator<Entity> iterator = entities.iterator();
+		while(iterator.hasNext()){
+			Entity entity = iterator.next();
+			
+			if(entity instanceof Bullet){
+				if(((Bullet) entity).destructionScheduled()){
+					((Bullet) entity).destroyBodies();
+					entity.dispose();
+					iterator.remove();
+				}
+			}
 		}
 		
 		world.step(delta, 6, 2);
@@ -290,6 +316,8 @@ public class GameScreen implements Screen, InputProcessor {
 		debugRenderer.dispose();
 		mapRenderer.dispose();
 		map.dispose();
+		
+		System.out.println("GameScreen disposed");
 	}
 
 	@Override

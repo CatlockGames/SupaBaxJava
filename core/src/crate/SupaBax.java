@@ -39,5 +39,6 @@ public class SupaBax extends Game {
 	public void dispose() {
 		batch.dispose();
 		gameScreen.dispose();
+		System.out.println("SupaBax disposed");
 	}
 }

@@ -32,8 +32,8 @@ public class PistolBullet extends Bullet {
 	 * @param gameScreen
 	 * @param direction
 	 */
-	public PistolBullet(GameScreen gameScreen, Vector2 position, float direction) {
-		super(gameScreen, direction, 0.5f, 0.5f, 1f, 10f);
+	public PistolBullet(GameScreen gameScreen, Vector2 playerPosition, float direction) {
+		super(gameScreen, direction, 0.5f, 0.5f, 1f, 5f);
 		this.world = gameScreen.getWorld();
 		
 		//Setup the animations
@@ -56,7 +56,7 @@ public class PistolBullet extends Bullet {
 		//Body definition
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
-		bodyDef.position.set(position);
+		bodyDef.position.set(new Vector2(playerPosition.x + (0.8f * direction), playerPosition.y));
 		bodyDef.bullet = true;
 
 		body = world.createBody(bodyDef);
@@ -95,6 +95,12 @@ public class PistolBullet extends Bullet {
 	@Override
 	public void dispose() {
 		sheet.dispose();
+		System.out.println("Pistol bullet disposed");
+	}
+
+	@Override
+	public void destroyBodies() {
+		world.destroyBody(body);
 	}
 
 }

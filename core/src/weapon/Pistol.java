@@ -38,6 +38,7 @@ public class Pistol extends Weapon {
 
 	@Override
 	public void dispose() {
+		System.out.println("Pistol disposed");
 	}
 
 }

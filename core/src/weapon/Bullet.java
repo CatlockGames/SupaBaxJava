@@ -34,6 +34,8 @@ public abstract class Bullet extends Entity {
 	
 	protected float damage;
 	protected float speed;
+	
+	private boolean destructionScheduled = false;
 
 	/**
 	 * 
@@ -52,5 +54,22 @@ public abstract class Bullet extends Entity {
 		this.damage = damage;
 		this.speed = speed;
 	}
+	
+	/**
+	 * Schedules the bullet to be destroyed
+	 */
+	public void scheduleDestruction(){
+		destructionScheduled = true;
+	}
+	
+	/**
+	 * Gets if the bullet is scheduled to be destroyed
+	 * @return
+	 */
+	public boolean destructionScheduled(){
+		return destructionScheduled;
+	}
+	
+	public abstract void destroyBodies();
 
 }

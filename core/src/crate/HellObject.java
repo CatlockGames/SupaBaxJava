@@ -63,6 +63,7 @@ public class HellObject extends Entity {
 
 	@Override
 	public void dispose() {
+		System.out.println("HellObject disposed");
 	}
 
 }

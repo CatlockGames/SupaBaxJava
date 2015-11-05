@@ -96,6 +96,7 @@ public class Crate extends Entity {
 	@Override
 	public void dispose() {
 		sprite.getTexture().dispose();
+		System.out.println("Crate disposed");
 	}
 	
 	/**
