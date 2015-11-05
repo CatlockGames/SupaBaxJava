@@ -166,6 +166,11 @@ public class GameScreen implements Screen, InputProcessor {
 				if((contact.getFixtureA().getUserData() == "bpf" && contact.getFixtureB().getUserData() == "bpf") || (contact.getFixtureB().getUserData() == "bpf" && contact.getFixtureA().getUserData() == "bpf")){
 					contact.setEnabled(false);
 				}
+				
+				//Prevent collision between bullets and crates
+				if((contact.getFixtureA().getUserData() == "bpf" && contact.getFixtureB().getUserData() == "cpf") || (contact.getFixtureB().getUserData() == "bpf" && contact.getFixtureA().getUserData() == "cpf")){
+					contact.setEnabled(false);
+				}
 			}
 			
 			@Override
@@ -306,7 +311,7 @@ public class GameScreen implements Screen, InputProcessor {
 		} else if(keycode == Input.Keys.RIGHT){
 			player.setMovingRight(true);
 		}
-		if(keycode == Input.Keys.UP){
+		if(keycode == Input.Keys.UP || keycode == Input.Keys.Z){
 			player.setJump(true);
 		}
 		if(keycode == Input.Keys.X){

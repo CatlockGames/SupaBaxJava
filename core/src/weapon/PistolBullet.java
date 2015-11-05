@@ -33,7 +33,7 @@ public class PistolBullet extends Bullet {
 	 * @param direction
 	 */
 	public PistolBullet(GameScreen gameScreen, Vector2 position, float direction) {
-		super(gameScreen, direction, 0.5f, 0.5f, 1f, 1f);
+		super(gameScreen, direction, 0.5f, 0.5f, 1f, 10f);
 		this.world = gameScreen.getWorld();
 		
 		//Setup the animations
@@ -57,6 +57,7 @@ public class PistolBullet extends Bullet {
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.position.set(position);
+		bodyDef.bullet = true;
 
 		body = world.createBody(bodyDef);
 		body.setUserData(this);
@@ -69,6 +70,10 @@ public class PistolBullet extends Bullet {
 		physicsFixture.setFriction(0f);
 		
 		physicsShape.dispose();
+		
+		body.setGravityScale(0);
+		
+		body.applyLinearImpulse(new Vector2(speed * direction, 0f), body.getPosition(), true);
 	}
 
 	@Override
