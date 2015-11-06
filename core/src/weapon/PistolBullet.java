@@ -3,6 +3,8 @@
  */
 package weapon;
 
+import java.util.Random;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -33,7 +35,7 @@ public class PistolBullet extends Bullet {
 	 * @param direction
 	 */
 	public PistolBullet(GameScreen gameScreen, Vector2 playerPosition, float direction) {
-		super(gameScreen, direction, 0.5f, 0.5f, 1f, 5f);
+		super(gameScreen, 0.5f, 0.5f, direction, 1f, 5f);
 		this.world = gameScreen.getWorld();
 		
 		//Setup the animations
@@ -73,7 +75,15 @@ public class PistolBullet extends Bullet {
 		
 		body.setGravityScale(0);
 		
-		body.applyLinearImpulse(new Vector2(speed * direction, 0f), body.getPosition(), true);
+		Random random = new Random();
+		Vector2 impulse = new Vector2(speed, 0f);
+		float spread = 2f;
+		if(direction < 0){
+			impulse.setAngle((180f - spread / 2) + random.nextFloat() * spread);
+		} else if(direction > 0){
+			impulse.setAngle(-spread / 2 + (random.nextFloat() * spread));
+		}
+		body.applyLinearImpulse(impulse, body.getPosition(), true);
 	}
 
 	@Override

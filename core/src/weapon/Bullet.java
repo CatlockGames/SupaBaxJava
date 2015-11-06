@@ -45,12 +45,12 @@ public abstract class Bullet extends Entity {
 	 * @param damage
 	 * @param speed
 	 */
-	public Bullet(GameScreen gameScreen, float direction, float width, float height, float damage, float speed) {
+	public Bullet(GameScreen gameScreen, float width, float height, float direction, float damage, float speed) {
 		super(gameScreen);
 		
-		this.direction = direction;
 		this.width = width;
 		this.height = height;
+		this.direction = direction;
 		this.damage = damage;
 		this.speed = speed;
 	}

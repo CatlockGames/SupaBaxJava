@@ -209,11 +209,11 @@ public class GameScreen implements Screen, InputProcessor {
 				}
 				
 				//Delete bullets if they collide with something collidable
-				if(contact.getFixtureA().getUserData() == "bpf" && contact.getFixtureB().getUserData() != "cpf"){
+				if(contact.getFixtureA().getUserData() == "bpf" && contact.getFixtureB().getUserData() != "cpf" && contact.getFixtureB().getUserData() != "bpf"){
 					Bullet bullet = (Bullet) contact.getFixtureA().getBody().getUserData();
 					bullet.scheduleDestruction();
 				}
-				if(contact.getFixtureB().getUserData() == "bpf" && contact.getFixtureA().getUserData() != "cpf"){
+				if(contact.getFixtureB().getUserData() == "bpf" && contact.getFixtureA().getUserData() != "cpf" && contact.getFixtureA().getUserData() != "bpf"){
 					Bullet bullet = (Bullet) contact.getFixtureB().getBody().getUserData();
 					bullet.scheduleDestruction();
 				}
