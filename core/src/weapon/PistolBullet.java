@@ -32,6 +32,7 @@ public class PistolBullet extends Bullet {
 	/**
 	 * 
 	 * @param gameScreen
+	 * @param playerPosition
 	 * @param direction
 	 */
 	public PistolBullet(GameScreen gameScreen, Vector2 playerPosition, float direction) {
@@ -79,9 +80,9 @@ public class PistolBullet extends Bullet {
 		Vector2 impulse = new Vector2(speed, 0f);
 		float spread = 2f;
 		if(direction < 0){
-			impulse.setAngle((180f - spread / 2) + random.nextFloat() * spread);
+			impulse.setAngle((180f - spread / 2f) + random.nextFloat() * spread);
 		} else if(direction > 0){
-			impulse.setAngle(-spread / 2 + (random.nextFloat() * spread));
+			impulse.setAngle(-spread / 2f + (random.nextFloat() * spread));
 		}
 		body.applyLinearImpulse(impulse, body.getPosition(), true);
 	}
