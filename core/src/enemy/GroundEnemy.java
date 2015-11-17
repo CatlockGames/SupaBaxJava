@@ -42,6 +42,8 @@ public abstract class GroundEnemy extends Entity {
 	protected float speed = 4f;
 	protected float direction = 1f;
 	protected float rage = 1f;
+	protected float currentHealth;
+	protected float health;
 	
 	protected boolean reincarnate = false;
 
@@ -51,12 +53,16 @@ public abstract class GroundEnemy extends Entity {
 	 * @param width
 	 * @param height
 	 */
-	public GroundEnemy(GameScreen gameScreen, float width, float height) {
+	public GroundEnemy(GameScreen gameScreen, float width, float height, float health) {
 		super(gameScreen);
 		this.world = gameScreen.getWorld();
 		this.width = width;
 		this.height = height;
+		this.health = health;
+		this.currentHealth = health;
 	}
+	
+	public abstract void destroyBodies();
 	
 	/**
 	 * Toggles the direction of the enemy
@@ -70,6 +76,17 @@ public abstract class GroundEnemy extends Entity {
 	 */
 	public void reincarnate(){
 		reincarnate = true;
+		currentHealth = health;
 	}
 
+	/**
+	 * 
+	 * @param damage
+	 */
+	public void damage(float damage) {
+		currentHealth -= damage;
+		if (currentHealth <= 0) {
+			scheduleDestruction();
+		}
+	}
 }

@@ -13,6 +13,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
  */
 public abstract class Entity {
 	protected GameScreen gameScreen;
+	
+	private boolean destructionScheduled = false;
 
 	/**
 	 * 
@@ -38,5 +40,20 @@ public abstract class Entity {
 	 * Every entity object must have a dispose method
 	 */
 	public abstract void dispose();
+	
+	/**
+	 * Schedules the enemy to be destroyed
+	 */
+	public void scheduleDestruction(){
+		destructionScheduled = true;
+	}
+	
+	/**
+	 * Gets if the enemy is scheduled to be destroyed
+	 * @return
+	 */
+	public boolean destructionScheduled(){
+		return destructionScheduled;
+	}
 
 }

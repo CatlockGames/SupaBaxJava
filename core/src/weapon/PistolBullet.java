@@ -105,6 +105,7 @@ public class PistolBullet extends Bullet {
 
 	@Override
 	public void dispose() {
+		destroyBodies();
 		sheet.dispose();
 		System.out.println("Pistol bullet disposed");
 	}

@@ -32,7 +32,7 @@ public class BigEnemy extends GroundEnemy {
 	 * @param gameScreen
 	 */
 	public BigEnemy(GameScreen gameScreen) {
-		super(gameScreen, 1.5f, 1.5f);
+		super(gameScreen, 1.5f, 1.5f, 10f);
 		
 		//Setup the animations
 		sheet = new Texture(Gdx.files.internal("spritesheets/enemies/smallenemy.png"));
@@ -129,8 +129,14 @@ public class BigEnemy extends GroundEnemy {
 
 	@Override
 	public void dispose() {
+		destroyBodies();
 		sheet.dispose();
 		System.out.println("BigEnemy disposed");
+	}
+
+	@Override
+	public void destroyBodies() {
+		world.destroyBody(body);
 	}
 
 }

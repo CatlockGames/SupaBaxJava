@@ -235,6 +235,17 @@ public class GameScreen implements Screen, InputProcessor {
 				if(contact.getFixtureB().getUserData() == "egsf" && contact.getFixtureA().getUserData() == "hpf"){
 					GroundEnemy enemy = (GroundEnemy) contact.getFixtureB().getBody().getUserData();
 					enemy.reincarnate();
+				}	
+				//Collision with enemy and bullet object
+				if (contact.getFixtureA().getUserData() == "epf" && contact.getFixtureB().getUserData() == "bpf") {
+					GroundEnemy enemy = (GroundEnemy) contact.getFixtureA().getBody().getUserData();
+					Bullet bullet = (Bullet) contact.getFixtureB().getBody().getUserData();
+					enemy.damage(bullet.getDamage());
+				}
+				if (contact.getFixtureB().getUserData() == "epf" && contact.getFixtureA().getUserData() == "bpf") {
+					GroundEnemy enemy = (GroundEnemy) contact.getFixtureB().getBody().getUserData();
+					Bullet bullet = (Bullet) contact.getFixtureA().getBody().getUserData();
+					enemy.damage(bullet.getDamage());
 				}
 			}
 		});
@@ -253,13 +264,9 @@ public class GameScreen implements Screen, InputProcessor {
 		Iterator<Entity> iterator = entities.iterator();
 		while(iterator.hasNext()){
 			Entity entity = iterator.next();
-			
-			if(entity instanceof Bullet){
-				if(((Bullet) entity).destructionScheduled()){
-					((Bullet) entity).destroyBodies();
-					entity.dispose();
-					iterator.remove();
-				}
+			if(entity.destructionScheduled()){
+				entity.dispose();
+				iterator.remove();
 			}
 		}
 		
