@@ -174,6 +174,9 @@ public class Player extends Entity{
 		if(movingRight && vel.x < maxSpeed){
 			body.applyLinearImpulse(new Vector2(speed, 0f), pos, true);
 		}
+		if((movingLeft && movingRight) || (!movingLeft && !movingRight)){
+			body.setLinearVelocity(0f, vel.y);
+		}
 		
 		//Jump if grounded
 		if(jump){
